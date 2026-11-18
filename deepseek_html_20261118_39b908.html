@@ -1,1 +1,205 @@
-placeholder
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthBooking Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #1c2b36;
+      --green: #48a87d;
+      --green-dark: #2f8061;
+      --mint: #edf7f2;
+      --blue: #edf4fb;
+      --orange: #fff3e7;
+      --text: #263641;
+      --muted: #7b8993;
+      --line: #e8edef;
+      --white: #fff;
+      --shadow: 0 10px 30px rgba(30, 56, 48, .07);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "DM Sans", sans-serif; color: var(--text); background: #f6f8f7; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .app { display: grid; grid-template-columns: 238px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar { background: var(--white); border-right: 1px solid var(--line); padding: 28px 18px 22px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 10px 30px; font: 800 20px "Manrope", sans-serif; }
+    .brand-mark { width: 36px; height: 36px; border-radius: 11px; background: var(--green); display: grid; place-items: center; color: white; }
+    .brand-mark svg { width: 21px; }
+    .nav { display: grid; gap: 6px; }
+    .nav-item { border: 0; background: transparent; color: #6d7b84; display: flex; align-items: center; gap: 13px; padding: 12px 14px; border-radius: 9px; text-align: left; font-weight: 600; }
+    .nav-item svg { width: 19px; height: 19px; }
+    .nav-item.active { background: var(--mint); color: var(--green-dark); }
+    .nav-item:hover { background: #f4f7f6; }
+    .sidebar-bottom { margin-top: auto; }
+    .user-card { display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--line); margin-top: 12px; padding: 18px 8px 0; }
+    .avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; background: #d7e9e1; }
+    .user-info strong { display: block; font-size: 13px; }
+    .user-info span { color: var(--muted); font-size: 12px; }
+    .main { min-width: 0; }
+    .topbar { height: 82px; background: var(--white); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 38px; }
+    .search { width: min(410px, 45%); height: 44px; border: 1px solid var(--line); border-radius: 9px; display: flex; align-items: center; gap: 10px; padding: 0 13px; background: #fafbfb; }
+    .search svg { width: 18px; color: #9aa5ab; }
+    .search input { border: 0; outline: 0; background: transparent; width: 100%; color: var(--text); }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .icon-btn { width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 9px; background: white; display: grid; place-items: center; color: #73818a; }
+    .icon-btn svg { width: 19px; }
+    .notification { position: relative; }
+    .notification::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #ed7d67; border: 2px solid white; position: absolute; right: 8px; top: 7px; }
+    .content { padding: 30px 38px 38px; }
+    .welcome { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
+    .welcome h1 { margin: 0 0 5px; font: 800 27px "Manrope", sans-serif; color: var(--navy); }
+    .welcome p { margin: 0; color: var(--muted); }
+    .date-btn { height: 42px; border: 1px solid var(--line); border-radius: 9px; background: white; display: flex; align-items: center; gap: 9px; padding: 0 13px; color: #64737c; font-weight: 600; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 18px; }
+    .stat { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: flex; align-items: center; gap: 13px; box-shadow: 0 4px 16px rgba(35, 66, 58, .025); }
+    .stat-icon { width: 46px; height: 46px; border-radius: 11px; display: grid; place-items: center; }
+    .stat-icon svg { width: 21px; }
+    .stat-icon.green { background: var(--mint); color: var(--green); }
+    .stat-icon.blue { background: var(--blue); color: #5d8ec1; }
+    .stat-icon.orange { background: var(--orange); color: #d99a52; }
+    .stat-icon.purple { background: #f2effa; color: #8974b7; }
+    .stat-info span { color: var(--muted); font-size: 12px; }
+    .stat-info strong { display: block; margin-top: 3px; font: 800 21px "Manrope", sans-serif; color: var(--navy); }
+    .grid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(280px, .82fr); gap: 18px; }
+    .card { background: white; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+    .card-head { height: 62px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .card-head h2 { margin: 0; font: 800 16px "Manrope", sans-serif; color: var(--navy); }
+    .view-all { border: 0; background: transparent; color: var(--green-dark); font-weight: 700; }
+    .appointment { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid #eef1f1; }
+    .appointment:last-child { border-bottom: 0; }
+    .doctor-avatar { width: 54px; height: 54px; border-radius: 10px; object-fit: cover; background: #edf1f0; }
+    .appointment-info strong { display: block; font-size: 14px; margin-bottom: 4px; }
+    .appointment-info span { color: var(--muted); font-size: 12px; }
+    .appointment-meta { text-align: right; }
+    .appointment-meta strong { display: block; font-size: 13px; margin-bottom: 5px; }
+    .status { display: inline-block; border-radius: 20px; padding: 4px 8px; font-size: 10px; font-weight: 700; }
+    .status.confirmed { background: var(--mint); color: var(--green-dark); }
+    .status.pending { background: var(--orange); color: #bd7b35; }
+    .schedule { padding: 12px 18px 16px; }
+    .mini-calendar { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 5px; }
+    .mini-calendar .day-name { color: var(--muted); font-size: 10px; padding-bottom: 8px; }
+    .mini-calendar .day { aspect-ratio: 1; border: 0; border-radius: 8px; background: transparent; color: #5d6b73; font-size: 12px; }
+    .mini-calendar .day.selected { background: var(--green); color: white; font-weight: 700; }
+    .calendar-title { display: flex; justify-content: space-between; align-items: center; padding: 4px 2px 13px; font-weight: 700; }
+    .calendar-title button { border: 0; background: transparent; color: var(--muted); }
+    .right-stack { display: grid; gap: 18px; }
+    .activity { padding: 8px 20px 12px; }
+    .activity-row { display: flex; gap: 11px; padding: 9px 0; align-items: flex-start; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-top: 5px; box-shadow: 0 0 0 4px var(--mint); flex: 0 0 auto; }
+    .activity-row strong { display: block; font-size: 12px; }
+    .activity-row span { color: var(--muted); font-size: 11px; }
+    @media (max-width: 1100px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .app { grid-template-columns: 72px minmax(0, 1fr); }
+      .sidebar { padding: 20px 10px; }
+      .brand { padding: 0 8px 24px; }
+      .brand-name, .nav-item span, .user-info { display: none; }
+      .nav-item { justify-content: center; padding: 13px; }
+      .user-card { justify-content: center; padding: 16px 0 0; }
+      .topbar { height: 70px; padding: 0 18px; }
+      .search { width: 55%; }
+      .content { padding: 24px 18px; }
+      .welcome { align-items: flex-start; }
+      .welcome h1 { font-size: 22px; }
+      .date-btn span { display: none; }
+    }
+    @media (max-width: 520px) {
+      .app { display: block; }
+      .sidebar { position: fixed; z-index: 20; bottom: 0; top: auto; width: 100%; height: 66px; border-right: 0; border-top: 1px solid var(--line); padding: 8px 10px; }
+      .brand, .sidebar-bottom { display: none; }
+      .nav { grid-template-columns: repeat(5, 1fr); }
+      .nav-item { border-radius: 8px; }
+      .main { padding-bottom: 66px; }
+      .top-actions .icon-btn:first-child { display: none; }
+      .search { width: 65%; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat { padding: 12px; }
+      .stat-icon { width: 40px; height: 40px; }
+      .appointment { grid-template-columns: 48px minmax(0, 1fr); }
+      .doctor-avatar { width: 48px; height: 48px; }
+      .appointment-meta { grid-column: 2; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></div>
+        <span class="brand-name">HealthBook</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></button>
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><span>Appointments</span></button>
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-5 3.5-7 8-7s7.2 2 8 7"/></svg><span>Doctors</span></button>
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M16 11h6"/></svg><span>Patients</span></button>
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2H12v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L7.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 6 14H5.8v-4H6a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L7.2 7 9 5.2l.1.1A1.7 1.7 0 0 0 11 5.6a1.7 1.7 0 0 0 1-1.6v-.2h4v.2A1.7 1.7 0 0 0 17 5.6a1.7 1.7 0 0 0 1.9-.3l.1-.1L20.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H22a1.7 1.7 0 0 0-1.6 1z"/></svg><span>Settings</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.1 2.4c-.6.2-.6.6-.6 1.1M12 16h.01"/></svg><span>Help & Support</span></button>
+        <div class="user-card"><img class="avatar" src="https://i.pravatar.cc/80?img=47" alt="Admin"><div class="user-info"><strong>Emma Wilson</strong><span>Administrator</span></div></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" placeholder="Search patients, doctors..."></label>
+        <div class="top-actions">
+          <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></button>
+          <button class="icon-btn notification"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="welcome"><div><h1>Good morning, Emma</h1><p>Here's what's happening with your clinic today.</p></div><button class="date-btn">📅 <span id="todayDate">November 18, 2026</span></button></div>
+
+        <div class="stats">
+          <div class="stat"><div class="stat-icon green">✓</div><div class="stat-info"><span>Appointments</span><strong>24</strong></div></div>
+          <div class="stat"><div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="4"/><path d="M2 21c1-5 3.5-7 7-7s6 2 7 7M16 4v6M13 7h6"/></svg></div><div class="stat-info"><span>New Patients</span><strong>8</strong></div></div>
+          <div class="stat"><div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-5 3.5-7 8-7s7.2 2 8 7"/></svg></div><div class="stat-info"><span>Available Doctors</span><strong>12</strong></div></div>
+          <div class="stat"><div class="stat-icon purple">$</div><div class="stat-info"><span>Today's Revenue</span><strong>$3,240</strong></div></div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="card-head"><h2>Upcoming Appointments</h2><button class="view-all">View all</button></div>
+            <div class="appointment"><img class="doctor-avatar" src="https://i.pravatar.cc/100?img=12" alt="Dr. James"><div class="appointment-info"><strong>James Wilson</strong><span>Dr. Robert Chen · Cardiology</span></div><div class="appointment-meta"><strong>09:00 AM</strong><span class="status confirmed">Confirmed</span></div></div>
+            <div class="appointment"><img class="doctor-avatar" src="https://i.pravatar.cc/100?img=32" alt="Dr. Sarah"><div class="appointment-info"><strong>Sophia Martinez</strong><span>Dr. Sarah Adams · Dermatology</span></div><div class="appointment-meta"><strong>10:30 AM</strong><span class="status pending">Pending</span></div></div>
+            <div class="appointment"><img class="doctor-avatar" src="https://i.pravatar.cc/100?img=68" alt="Dr. Michael"><div class="appointment-info"><strong>William Brown</strong><span>Dr. Michael Lee · Neurology</span></div><div class="appointment-meta"><strong>11:45 AM</strong><span class="status confirmed">Confirmed</span></div></div>
+            <div class="appointment"><img class="doctor-avatar" src="https://i.pravatar.cc/100?img=44" alt="Dr. Olivia"><div class="appointment-info"><strong>Olivia Davis</strong><span>Dr. Olivia Parker · Pediatrics</span></div><div class="appointment-meta"><strong>02:15 PM</strong><span class="status confirmed">Confirmed</span></div></div>
+          </div>
+
+          <div class="right-stack">
+            <div class="card">
+              <div class="card-head"><h2 id="calendarTitle">November 2026</h2><div><button aria-label="Previous month">‹</button><button aria-label="Next month">›</button></div></div>
+              <div class="schedule"><div class="mini-calendar" id="calendar"></div></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>Recent Activity</h2></div>
+              <div class="activity">
+                <div class="activity-row"><div class="activity-dot"></div><div><strong>New appointment booked</strong><span>Sarah Miller · 12 min ago</span></div></div>
+                <div class="activity-row"><div class="activity-dot" style="background:#6e93c2;box-shadow:0 0 0 4px #edf4fb"></div><div><strong>Patient record updated</strong><span>James Wilson · 38 min ago</span></div></div>
+                <div class="activity-row"><div class="activity-dot" style="background:#d99a52;box-shadow:0 0 0 4px #fff3e7"></div><div><strong>Payment received</strong><span>$240 · 1 hr ago</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const calendar = document.getElementById('calendar');
+    ['S','M','T','W','T','F','S'].forEach(d => { const el=document.createElement('div'); el.className='day-name'; el.textContent=d; calendar.appendChild(el); });
+    for(let i=1;i<32;i++){ const el=document.createElement('button'); el.className='day'+(i===18?' selected':''); el.textContent=i; calendar.appendChild(el); }
+    document.querySelectorAll('.nav-item').forEach(item=>item.addEventListener('click',()=>{ document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); if(item.closest('.nav')) item.classList.add('active'); }));
+  </script>
+</body>
+</html>
